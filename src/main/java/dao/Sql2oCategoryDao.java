@@ -1,6 +1,7 @@
 package dao;
 
 import models.Category;
+import models.Task;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 import org.sql2o.Sql2oException;
@@ -78,6 +79,15 @@ public class Sql2oCategoryDao implements CategoryDao {
               .executeUpdate();
     } catch (Sql2oException ex){
       System.out.println(ex);
+    }
+  }
+
+  @Override
+  public List<Task> getAllTasksByCategory(int categoryId) {
+    try(Connection con = sql2o.open()){
+      return con.createQuery("SELECT * FROM tasks WHERE categoryId = :categoryId")
+              .addParameter("categoryId", categoryId)
+              .executeAndFetch(Task.class);
     }
   }
 }
