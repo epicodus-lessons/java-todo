@@ -1,6 +1,7 @@
 package dao;
 
 import models.Category;
+import models.Task;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -86,6 +87,22 @@ public class Sql2oCategoryDaoTest {
     int daoSize = categoryDao.getAll().size();
     categoryDao.clearAllCategories();
     assertTrue(daoSize > 0 && daoSize > categoryDao.getAll().size());
+  }
+
+  @Test
+  public void getAllTasksByCategoryReturnsTasksCorrectly() throws Exception {
+    Category category = setupNewCategory();
+    categoryDao.add(category);
+    int categoryId = category.getId();
+    Task newTask = new Task("mow the lawn", categoryId);
+    Task otherTask = new Task("pull weeds", categoryId);
+    Task thirdTask = new Task("trim hedge", categoryId);
+    taskDao.add(newTask);
+    taskDao.add(otherTask); //we are not adding task 3 so we can test things precisely.
+    assertEquals(2, categoryDao.getAllTasksByCategory(categoryId).size());
+    assertTrue(categoryDao.getAllTasksByCategory(categoryId).contains(newTask));
+    assertTrue(categoryDao.getAllTasksByCategory(categoryId).contains(otherTask));
+    assertFalse(categoryDao.getAllTasksByCategory(categoryId).contains(thirdTask)); //things are accurate!
   }
 
   // helper method
